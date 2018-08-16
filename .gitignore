@@ -1,0 +1,18 @@
+# temporary files, including nbproject/build-impl.xml~
+*~
+
+target/
+
+.classpath
+.project
+.settings
+.idea
+
+nb-configuration.xml
+nbactions.xml
+
+build-impl.xml
+**/nbproject/private/
+
+build/
+dist/
