@@ -112,6 +112,7 @@ class MyRequest extends HttpServletRequestWrapper {
 
     @Override
     public Enumeration<String> getHeaders(String name) {
+        // TODO: if removeHeaderNames never called before, concat super.getHeaders() and headers.get()
         List<String> x = headers.get(name);
         if (x != null) {
             return Collections.enumeration(x);
