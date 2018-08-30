@@ -78,6 +78,7 @@ class MyRequest extends HttpServletRequestWrapper {
         if (supportsGetHeaderNames) {
             while (names.hasMoreElements()) {
                 String name = names.nextElement();
+                // TODO: instead, lazily call super.getHeaders() in getHeaders()
                 Enumeration<String> vals = request.getHeaders(name);
                 headers.put(name, vals == null ? null : Collections.list(vals));
             }
