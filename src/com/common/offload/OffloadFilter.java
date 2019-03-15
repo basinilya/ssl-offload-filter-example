@@ -131,7 +131,7 @@ class MyRequest extends HttpServletRequestWrapper {
             return -1L;
         }
 
-        long result = internalParseDate(value, asdasd());
+        long result = internalParseDate(value, getDateFormats());
         if (result != -1L) {
             return result;
         }
@@ -159,7 +159,7 @@ class MyRequest extends HttpServletRequestWrapper {
 
     protected static final ThreadLocal<SimpleDateFormat[]> DF_TLS = new ThreadLocal<>();
 
-    protected static SimpleDateFormat[] asdasd() {
+    protected static SimpleDateFormat[] getDateFormats() {
         SimpleDateFormat[] formats = DF_TLS.get();
         if (formats == null) {
             formats = new SimpleDateFormat[]{
