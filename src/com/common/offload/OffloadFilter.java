@@ -66,7 +66,8 @@ class MyRequest extends HttpServletRequestWrapper {
 
     protected final LinkedHashMap<String, List<String>> headers = new LinkedHashMap<>();
 
-    protected final HashSet<String> removedHeaders = new HashSet<>();
+    /** prevents super.getHeaders() */
+    protected final HashSet<String> hiddenSuperHeaders = new HashSet<>();
 
     protected final boolean supportsGetHeaderNames;
 
@@ -87,11 +88,10 @@ class MyRequest extends HttpServletRequestWrapper {
 
     public void removeHeaderValues(String name) {
         headers.remove(name);
-        removedHeaders.add(name);
+        hiddenSuperHeaders.add(name);
     }
 
     public void addHeader(String name, String value) {
-        removedHeaders.remove(name);
         List<String> x = headers.get(name);
         if (x == null) {
             x = new ArrayList<>();
@@ -113,15 +113,23 @@ class MyRequest extends HttpServletRequestWrapper {
 
     @Override
     public Enumeration<String> getHeaders(String name) {
-        // TODO: if removeHeaderNames never called before, concat super.getHeaders() and headers.get()
-        List<String> x = headers.get(name);
-        if (x != null) {
-            return Collections.enumeration(x);
+        List<String> added = headers.get(name);
+        if (!hiddenSuperHeaders.contains(name)) {
+            Enumeration<String> superHeaders = super.getHeaders(name);
+            if (added == null) {
+                return superHeaders;
+            }
+            List<String> combined = Collections.list(superHeaders);
+            combined.addAll(added);
+            return Collections.enumeration(combined);
         }
-        if (removedHeaders.contains(name)) {
-            return Collections.emptyEnumeration();
+
+        // super headers are hidden
+
+        if (added != null) {
+            return Collections.enumeration(added);
         }
-        return super.getHeaders(name);
+        return Collections.emptyEnumeration();
     }
 
     @Override
